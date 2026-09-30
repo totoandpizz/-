@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>히즈빈스 주문하기</title>
+<style>
+  :root{
+    --brand:#2f6b3e;
+    --brand-dark:#20492b;
+    --brand-light:#eaf4ec;
+    --accent:#e8a33d;
+    --text:#26312a;
+    --muted:#7c8a80;
+    --bg:#f6f8f5;
+    --card:#ffffff;
+    --line:#e4e9e2;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;padding:0;}
+  html,body{
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+  .app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);padding-bottom:96px;}
+
+  header.top{
+    position:sticky;top:0;z-index:10;
+    background:linear-gradient(135deg,var(--brand),var(--brand-dark));
+    color:#fff;padding:20px 20px 16px;
+  }
+  header.top .logo{font-size:22px;font-weight:800;letter-spacing:-0.5px;display:flex;align-items:center;gap:6px;}
+  header.top .sub{font-size:12px;opacity:.85;margin-top:4px;}
+
+  .tabs{display:flex;gap:8px;padding:14px 16px 8px;overflow-x:auto;}
+  .tab{
+    flex:0 0 auto;padding:8px 16px;border-radius:999px;font-size:14px;font-weight:600;
+    background:var(--card);color:var(--muted);border:1px solid var(--line);cursor:pointer;
+    white-space:nowrap;
+  }
+  .tab.active{background:var(--brand);color:#fff;border-color:var(--brand);}
+
+  .menu-list{padding:4px 16px 12px;display:flex;flex-direction:column;gap:12px;}
+  .menu-card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px;display:flex;flex-direction:column;gap:10px;
+  }
+  .menu-card .row1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .menu-card .name{font-size:16px;font-weight:700;}
+  .menu-card .desc{font-size:12px;color:var(--muted);margin-top:2px;}
+  .menu-card .price{font-size:15px;font-weight:700;color:var(--brand-dark);white-space:nowrap;}
+
+  .options{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .hot-ice{display:flex;gap:6px;}
+  .hot-ice button{
+    border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;
+    font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;
+  }
+  .hot-ice button.sel{background:var(--brand-light);border-color:var(--brand);color:var(--brand-dark);}
+
+  .qty-add{display:flex;align-items:center;gap:8px;}
+  .stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .stepper button{
+    width:28px;height:28px;border:none;background:#fff;font-size:16px;cursor:pointer;color:var(--brand-dark);
+  }
+  .stepper span{width:26px;text-align:center;font-size:13px;font-weight:700;}
+  .add-btn{
+    background:var(--brand);color:#fff;border:none;border-radius:8px;
+    padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;
+  }
+  .add-btn:active{transform:scale(.97);}
+
+  .cart-bar{
+    position:fixed;bottom:0;left:0;right:0;
+    display:flex;justify-content:center;
+    pointer-events:none;
+  }
+  .cart-bar .inner{
+    pointer-events:auto;
+    max-width:480px;width:100%;margin:0 16px 16px;
+    background:var(--brand-dark);color:#fff;border-radius:14px;
+    padding:14px 18px;display:flex;justify-content:space-between;align-items:center;
+    box-shadow:0 8px 24px rgba(0,0,0,.18);cursor:pointer;
+  }
+  .cart-bar .count{
+    background:var(--accent);color:#26312a;border-radius:999px;
+    font-size:12px;font-weight:800;padding:2px 8px;margin-right:8px;
+  }
+  .cart-bar .label{font-size:14px;font-weight:700;}
+  .cart-bar .total{font-size:15px;font-weight:800;}
+  .cart-bar.hidden{display:none;}
+
+  .overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;
+    display:flex;align-items:flex-end;justify-content:center;
+  }
+  .overlay.hidden{display:none;}
+  .sheet{
+    background:#fff;max-width:480px;width:100%;border-radius:20px 20px 0 0;
+    max-height:85vh;display:flex;flex-direction:column;
+  }
+  .sheet header{
+    padding:16px 18px;border-bottom:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .sheet header h2{font-size:16px;margin:0;}
+  .sheet header .close{border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;}
+  .sheet .body{padding:8px 18px;overflow-y:auto;flex:1;}
+  .empty-cart{padding:40px 0;text-align:center;color:var(--muted);font-size:14px;}
+
+  .cart-item{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 0;border-bottom:1px solid var(--line);gap:8px;
+  }
+  .cart-item .info .name{font-size:14px;font-weight:700;}
+  .cart-item .info .opt{font-size:12px;color:var(--muted);margin-top:2px;}
+  .cart-item .right{display:flex;align-items:center;gap:10px;}
+  .cart-item .price{font-size:13px;font-weight:700;white-space:nowrap;}
+  .remove-btn{border:none;background:none;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer;}
+
+  .sheet footer{
+    padding:14px 18px 20px;border-top:1px solid var(--line);
+  }
+  .total-row{display:flex;justify-content:space-between;font-size:15px;font-weight:700;margin-bottom:12px;}
+  .order-btn{
+    width:100%;padding:14px;border:none;border-radius:12px;background:var(--brand);
+    color:#fff;font-size:15px;font-weight:800;cursor:pointer;
+  }
+  .order-btn:disabled{background:#c8d0c9;cursor:not-allowed;}
+
+  .confirm-body{text-align:center;padding:24px 18px 8px;}
+  .confirm-body .icon{font-size:44px;}
+  .confirm-body h3{margin:12px 0 4px;font-size:18px;}
+  .confirm-body p{margin:0;color:var(--muted);font-size:13px;line-height:1.6;}
+  .order-no{
+    margin:14px auto 0;display:inline-block;background:var(--brand-light);color:var(--brand-dark);
+    font-weight:800;padding:8px 16px;border-radius:10px;font-size:15px;letter-spacing:.5px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="logo">☕ 히즈빈스</div>
+    <div class="sub">HBEANS COFFEE · 따뜻한 마음을 담은 한 잔</div>
+  </header>
+
+  <div class="tabs" id="tabs"></div>
+  <div class="menu-list" id="menuList"></div>
+</div>
+
+<div class="cart-bar hidden" id="cartBar">
+  <div class="inner" id="cartBarInner">
+    <div><span class="count" id="cartCount">0</span><span class="label">담긴 메뉴 보기</span></div>
+    <div class="total" id="cartBarTotal">0원</div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="cartOverlay">
+  <div class="sheet">
+    <header>
+      <h2>장바구니</h2>
+      <button class="close" id="closeCart">✕</button>
+    </header>
+    <div class="body" id="cartBody"></div>
+    <footer>
+      <div class="total-row"><span>총 금액</span><span id="cartTotal">0원</span></div>
+      <button class="order-btn" id="orderBtn" disabled>주문하기</button>
+    </footer>
+  </div>
+</div>
+
+<div class="overlay hidden" id="confirmOverlay">
+  <div class="sheet">
+    <div class="confirm-body">
+      <div class="icon">🎉</div>
+      <h3>주문이 접수되었어요!</h3>
+      <p>준비되는 대로 정성껏 내려드릴게요.<br/>픽업 시 주문번호를 말씀해주세요.</p>
+      <div class="order-no" id="orderNo">#0000</div>
+    </div>
+    <footer>
+      <button class="order-btn" id="confirmDone">확인</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+  const MENU = [
+    { id:1, cat:'coffee', name:'아메리카노', desc:'깔끔하고 진한 에스프레소', price:1500, hotIce:true },
+    { id:2, cat:'coffee', name:'카페라떼', desc:'부드러운 우유와 에스프레소', price:2500, hotIce:true },
+    { id:3, cat:'coffee', name:'바닐라라떼', desc:'달콤한 바닐라향 라떼', price:2800, hotIce:true },
+    { id:4, cat:'coffee', name:'카라멜마키아또', desc:'고소한 카라멜 시럽 듬뿍', price:3000, hotIce:true },
+    { id:5, cat:'coffee', name:'카푸치노', desc:'풍성한 우유 거품', price:2500, hotIce:true },
+    { id:6, cat:'coffee', name:'콜드브루', desc:'저온 숙성 원두의 깊은 맛', price:2500, hotIce:false },
+    { id:7, cat:'nonc', name:'초코라떼', desc:'진한 초콜릿과 우유', price:2800, hotIce:true },
+    { id:8, cat:'nonc', name:'유자차', desc:'상큼한 유자 본연의 맛', price:2500, hotIce:true },
+    { id:9, cat:'ade', name:'자몽에이드', desc:'새콤달콤 자몽 과육 가득', price:3000, hotIce:false },
+    { id:10, cat:'ade', name:'레몬에이드', desc:'상큼함이 필요할 때', price:3000, hotIce:false },
+  ];
+  const CATS = [
+    { id:'all', label:'전체' },
+    { id:'coffee', label:'커피' },
+    { id:'nonc', label:'논커피' },
+    { id:'ade', label:'에이드' },
+  ];
+
+  let activeCat = 'all';
+  const selections = {};
+  MENU.forEach(m => { selections[m.id] = { temp: m.hotIce ? 'ICE' : 'ICE', qty: 0 }; });
+
+  let cart = [];
+  try { cart = JSON.parse(localStorage.getItem('hbeans_cart') || '[]'); } catch(e) { cart = []; }
+
+  function saveCart(){ localStorage.setItem('hbeans_cart', JSON.stringify(cart)); }
+  function won(n){ return n.toLocaleString('ko-KR') + '원'; }
+
+  function renderTabs(){
+    const tabsEl = document.getElementById('tabs');
+    tabsEl.innerHTML = '';
+    CATS.forEach(c => {
+      const btn = document.createElement('div');
+      btn.className = 'tab' + (activeCat === c.id ? ' active' : '');
+      btn.textContent = c.label;
+      btn.onclick = () => { activeCat = c.id; renderTabs(); renderMenu(); };
+      tabsEl.appendChild(btn);
+    });
+  }
+
+  function renderMenu(){
+    const list = document.getElementById('menuList');
+    list.innerHTML = '';
+    MENU.filter(m => activeCat === 'all' || m.cat === activeCat).forEach(m => {
+      const sel = selections[m.id];
+      const card = document.createElement('div');
+      card.className = 'menu-card';
+
+      const row1 = document.createElement('div');
+      row1.className = 'row1';
+      row1.innerHTML = `
+        <div>
+          <div class="name">${m.name}</div>
+          <div class="desc">${m.desc}</div>
+        </div>
+        <div class="price">${won(m.price)}</div>
+      `;
+      card.appendChild(row1);
+
+      const opts = document.createElement('div');
+      opts.className = 'options';
+
+      const hotIceDiv = document.createElement('div');
+      hotIceDiv.className = 'hot-ice';
+      if(m.hotIce){
+        ['HOT','ICE'].forEach(t => {
+          const b = document.createElement('button');
+          b.textContent = t;
+          if(sel.temp === t) b.classList.add('sel');
+          b.onclick = () => { sel.temp = t; renderMenu(); };
+          hotIceDiv.appendChild(b);
+        });
+      } else {
+        const b = document.createElement('button');
+        b.className = 'sel';
+        b.textContent = 'ICE ONLY';
+        b.disabled = true;
+        hotIceDiv.appendChild(b);
+      }
+      opts.appendChild(hotIceDiv);
+
+      const qa = document.createElement('div');
+      qa.className = 'qty-add';
+      qa.innerHTML = `
+        <div class="stepper">
+          <button data-act="dec">−</button>
+          <span>${sel.qty}</span>
+          <button data-act="inc">+</button>
+        </div>
+        <button class="add-btn" data-act="add">담기</button>
+      `;
+      qa.querySelector('[data-act="dec"]').onclick = () => { if(sel.qty>0) sel.qty--; renderMenu(); };
+      qa.querySelector('[data-act="inc"]').onclick = () => { sel.qty++; renderMenu(); };
+      qa.querySelector('[data-act="add"]').onclick = () => {
+        if(sel.qty === 0) return;
+        addToCart(m, sel.temp, sel.qty);
+        sel.qty = 0;
+        renderMenu();
+      };
+      opts.appendChild(qa);
+
+      card.appendChild(opts);
+      list.appendChild(card);
+    });
+  }
+
+  function addToCart(menu, temp, qty){
+    const key = menu.id + '_' + temp;
+    const existing = cart.find(c => c.key === key);
+    if(existing){
+      existing.qty += qty;
+    } else {
+      cart.push({ key, id: menu.id, name: menu.name, temp: menu.hotIce ? temp : null, price: menu.price, qty });
+    }
+    saveCart();
+    renderCartBar();
+  }
+
+  function removeFromCart(key){
+    cart = cart.filter(c => c.key !== key);
+    saveCart();
+    renderCartBar();
+    renderCartSheet();
+  }
+
+  function changeQty(key, delta){
+    const item = cart.find(c => c.key === key);
+    if(!item) return;
+    item.qty += delta;
+    if(item.qty <= 0){
+      cart = cart.filter(c => c.key !== key);
+    }
+    saveCart();
+    renderCartBar();
+    renderCartSheet();
+  }
+
+  function cartTotal(){
+    return cart.reduce((sum, c) => sum + c.price * c.qty, 0);
+  }
+  function cartCount(){
+    return cart.reduce((sum, c) => sum + c.qty, 0);
+  }
+
+  function renderCartBar(){
+    const bar = document.getElementById('cartBar');
+    const count = cartCount();
+    if(count === 0){
+      bar.classList.add('hidden');
+      return;
+    }
+    bar.classList.remove('hidden');
+    document.getElementById('cartCount').textContent = count;
+    document.getElementById('cartBarTotal').textContent = won(cartTotal());
+  }
+
+  function renderCartSheet(){
+    const body = document.getElementById('cartBody');
+    body.innerHTML = '';
+    if(cart.length === 0){
+      body.innerHTML = '<div class="empty-cart">담긴 메뉴가 없어요 🥺</div>';
+    } else {
+      cart.forEach(c => {
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        row.innerHTML = `
+          <div class="info">
+            <div class="name">${c.name}${c.temp ? ' (' + c.temp + ')' : ''}</div>
+            <div class="opt">${won(c.price)} · 수량 ${c.qty}개</div>
+          </div>
+          <div class="right">
+            <div class="stepper">
+              <button data-key="${c.key}" data-act="dec">−</button>
+              <span>${c.qty}</span>
+              <button data-key="${c.key}" data-act="inc">+</button>
+            </div>
+            <div class="price">${won(c.price * c.qty)}</div>
+          </div>
+        `;
+        row.querySelector('[data-act="dec"]').onclick = () => changeQty(c.key, -1);
+        row.querySelector('[data-act="inc"]').onclick = () => changeQty(c.key, 1);
+        body.appendChild(row);
+      });
+    }
+    document.getElementById('cartTotal').textContent = won(cartTotal());
+    document.getElementById('orderBtn').disabled = cart.length === 0;
+  }
+
+  document.getElementById('cartBarInner').onclick = () => {
+    renderCartSheet();
+    document.getElementById('cartOverlay').classList.remove('hidden');
+  };
+  document.getElementById('closeCart').onclick = () => {
+    document.getElementById('cartOverlay').classList.add('hidden');
+  };
+
+  document.getElementById('orderBtn').onclick = () => {
+    if(cart.length === 0) return;
+    const orderNo = Math.floor(1000 + Math.random() * 9000);
+    document.getElementById('orderNo').textContent = '#' + orderNo;
+    document.getElementById('cartOverlay').classList.add('hidden');
+    document.getElementById('confirmOverlay').classList.remove('hidden');
+    cart = [];
+    saveCart();
+    renderCartBar();
+  };
+
+  document.getElementById('confirmDone').onclick = () => {
+    document.getElementById('confirmOverlay').classList.add('hidden');
+  };
+
+  renderTabs();
+  renderMenu();
+  renderCartBar();
+</script>
+</body>
+</html>
