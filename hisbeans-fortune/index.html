@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="히즈빈스가 건네는 오늘의 말씀 한 구절">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>히즈빈스 말씀 카드</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Gowun+Batang:wght@700&display=swap">
+<style>
+/* 롱블랙 Play '문장 운세'의 화면 구조(3단계 스텝 · 카드 뒤집기)를 따르고, 색은 히즈빈스 흰색 · 녹색 */
+:root {
+  --bg: #ffffff;
+  --bar: #ffffff;
+  --line: #e3ebe5;
+  --tile: #f2f6f3;
+  --tile-hover: #e7efe9;
+  --fg: #12291a;
+  --sub: #c9d9cd;
+  --dim: #6f8475;
+  --accent: #1d462a;
+  --accent-2: #3e8e5a;
+  --mint: #dcebdf;
+  --btn-off: #dfe6e1;
+  --f: Pretendard, "Pretendard Variable", "Noto Sans KR", -apple-system, "Apple SD Gothic Neo", sans-serif;
+  --f-logo: "Fraunces", "Times New Roman", serif;
+  --f-quote: "Gowun Batang", "Nanum Myeongjo", serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); }
+body { font-family: var(--f); font-size: 16px; line-height: 1.5; letter-spacing: -0.01em; word-break: keep-all; min-height: 100vh; display: flex; flex-direction: column; }
+button { font: inherit; color: inherit; }
+img { display: block; max-width: 100%; }
+
+/* 헤더 */
+.gnb { border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; background: var(--bar); height: calc(60px + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) max(20px, env(safe-area-inset-right, 0px)) 0 max(20px, env(safe-area-inset-left, 0px)); display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--f-logo); font-weight: 600; font-size: 26px; letter-spacing: -0.03em; color: var(--accent); text-decoration: none; }
+.gnb-icons { display: flex; gap: 18px; }
+.gnb-icons svg { width: 26px; height: 26px; stroke: var(--accent); fill: none; stroke-width: 1.8; }
+
+main { flex: 1; width: 100%; max-width: 420px; margin: 0 auto; padding: 0 20px 48px; position: relative; }
+.screen[hidden] { display: none !important; }
+.screen { animation: fade .35s ease both; }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* 0. 인트로 */
+.intro { position: relative; padding-top: 24px; }
+.date { position: relative; height: 420px; color: var(--sub); display: flex; flex-direction: column; }
+.date .row { display: flex; align-items: flex-start; gap: 10px; }
+.date .row.end { margin-top: auto; justify-content: flex-end; align-items: center; }
+.date .n { font-size: 80px; line-height: 88px; letter-spacing: -0.02em; font-weight: 400; font-variant-numeric: tabular-nums; }
+.date .u { font-size: 20px; line-height: 48px; }
+.intro-card { position: absolute; left: 50%; top: 80px; transform: translateX(-50%) rotate(0deg); width: 200px; aspect-ratio: 2 / 3; border-radius: 8px; overflow: hidden; background: var(--accent); box-shadow: 0 24px 40px -18px rgba(29,70,42,.55); animation: bob 4s ease-in-out infinite; }
+.intro-card img { width: 100%; height: 100%; object-fit: cover; }
+@keyframes bob { 0%,100% { transform: translateX(-50%) translateY(0) rotate(-1deg); } 50% { transform: translateX(-50%) translateY(-8px) rotate(1deg); } }
+.eyebrow { text-align: center; color: var(--accent-2); font-weight: 500; font-size: 16px; margin: 24px 0 8px; }
+.headline { text-align: center; font-size: 26px; line-height: 32px; font-weight: 700; margin: 0 0 28px; color: var(--accent); }
+
+/* 버튼 */
+.cta { display: block; width: calc(100% - 20px); margin: 0 auto; height: 52px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; font-weight: 600; font-size: 16px; cursor: pointer; transition: background .2s ease, color .2s ease; }
+.cta:disabled { background: var(--btn-off); color: var(--dim); cursor: default; }
+.cta:focus-visible, .tile:focus-visible, .pat:focus-visible, .back:focus-visible, .wheel:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* 스텝 헤더 */
+.stephead { position: relative; height: 56px; display: flex; align-items: center; justify-content: center; margin-top: 16px; }
+.back { position: absolute; left: 0; top: 50%; transform: translateY(-50%); background: none; border: 0; padding: 6px; cursor: pointer; }
+.back svg { width: 28px; height: 28px; stroke: var(--accent); stroke-width: 2; fill: none; }
+.dots { display: flex; align-items: center; }
+.dot { width: 24px; height: 24px; border-radius: 50%; background: var(--btn-off); color: var(--dim); font-size: 13px; font-weight: 600; display: grid; place-items: center; }
+.dot.on { background: var(--accent); color: #fff; }
+.dot.done { background: var(--accent-2); color: #fff; }
+.dot.done span { display: none; }
+.dot.done::after { content: ""; width: 9px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: translateY(-1px) rotate(-45deg); }
+.bar { width: 22px; height: 1px; background: var(--btn-off); }
+.bar.done { background: var(--accent-2); }
+.q { text-align: center; font-size: 22px; font-weight: 700; margin: 4px 0 32px; color: var(--accent); }
+
+/* 1. 단어 */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 44px; }
+.tile { height: 84px; border: 0; border-radius: 8px; background: var(--tile); font-size: 20px; font-weight: 700; color: var(--accent); cursor: pointer; transition: background .15s ease, color .15s ease; }
+.tile:hover { background: var(--tile-hover); }
+.tile[aria-pressed="true"] { background: var(--accent); color: #fff; }
+
+/* 2. 기분 휠 */
+.wheel { height: 400px; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; margin: -12px 0 44px; -webkit-mask-image: linear-gradient(transparent, #000 30%, #000 70%, transparent); mask-image: linear-gradient(transparent, #000 30%, #000 70%, transparent); outline: none; }
+.wheel::-webkit-scrollbar { display: none; }
+.wheel ul { list-style: none; margin: 0; padding: 160px 0; }
+.wheel li { height: 80px; display: grid; place-items: center; scroll-snap-align: center; font-size: 28px; font-weight: 700; color: #c4d2c7; transition: color .15s ease, font-size .15s ease; cursor: pointer; user-select: none; }
+.wheel li.near { color: #8fa596; }
+.wheel li.cur { color: var(--accent); font-size: 44px; }
+
+/* 3. 패턴 */
+.pats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 44px; }
+.pat { padding: 0; border: 0; border-radius: 8px; overflow: hidden; height: 84px; cursor: pointer; background: var(--tile); position: relative; transition: transform .15s ease, opacity .15s ease; }
+.pat img { width: 100%; height: 100%; object-fit: cover; }
+.pats.has-pick .pat:not([aria-pressed="true"]) { opacity: .35; }
+.pat[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--accent-2); }
+
+/* 4. 셔플 · 결과 */
+.shuffle { padding-top: 40px; text-align: center; }
+.shuffle h2 { font-size: 22px; line-height: 30px; font-weight: 700; margin: 0 0 28px; color: var(--accent); }
+.stage { position: relative; perspective: 1400px; width: 280px; aspect-ratio: 280 / 448; margin: 0 auto; }
+.flip { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 1s cubic-bezier(.2,.7,.2,1); cursor: pointer; }
+.flip.open { transform: rotateY(180deg); cursor: default; }
+.face { position: absolute; inset: 0; border-radius: 8px; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.cardback { background: linear-gradient(180deg, #0f2717 0%, #1d462a 40%, #3e8e5a 78%, #dcebdf 100%); text-align: left; }
+.cardback .t1, .cardback .t2 { position: absolute; font-size: 28px; line-height: 38px; font-weight: 700; color: rgba(255,255,255,.16); }
+.cardback .t1 { left: 20px; top: 20px; } .cardback .t2 { right: 18px; bottom: 18px; text-align: right; }
+.cardback canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.shuffling .flip { animation: shake .6s ease-in-out 3; }
+@keyframes shake { 0%,100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-14px) rotate(-3deg); } 75% { transform: translateX(14px) rotate(3deg); } }
+.tap { margin-top: 18px; font-size: 14px; color: var(--dim); }
+
+.front { transform: rotateY(180deg); background: #fff; color: var(--fg); border: 1px solid var(--line); display: flex; flex-direction: column; text-align: left; }
+.front .art { height: 46%; position: relative; }
+.front .art img { width: 100%; height: 100%; object-fit: cover; }
+.front .chip { position: absolute; left: 14px; top: 14px; background: #fff; color: var(--accent); font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 2px; }
+.front .body { flex: 1; padding: 18px 20px 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
+.front .lbl { font-size: 12px; font-weight: 600; color: var(--accent-2); letter-spacing: .02em; }
+.front blockquote { margin: 6px 0 0; font-family: var(--f-quote); font-size: 17px; line-height: 1.6; color: var(--accent); }
+.front .ref { display: block; margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--dim); }
+.front .meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--dim); font-variant-numeric: tabular-nums; }
+
+.backdrop { position: fixed; inset: 60px 0 0; z-index: -1; opacity: 0; transition: opacity 1s ease; pointer-events: none; }
+.backdrop img { width: 100%; height: 100%; object-fit: cover; filter: blur(3px) saturate(.9); opacity: .14; transform: scale(1.1); }
+.backdrop.on { opacity: 1; }
+
+.reading { margin-top: 32px; text-align: left; display: flex; flex-direction: column; gap: 20px; opacity: 0; transform: translateY(12px); transition: opacity .6s ease .6s, transform .6s ease .6s; }
+.reading.on { opacity: 1; transform: none; }
+.reading .eyebrow { text-align: left; margin: 0; color: var(--accent); }
+.reading h3 { margin: 0; font-size: 22px; line-height: 30px; font-weight: 700; color: var(--accent); }
+.reading p { margin: 0; color: #2f4436; line-height: 1.75; }
+.rows { border-top: 1px solid var(--line); }
+.rows div { display: flex; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.rows dt { color: var(--dim); font-size: 14px; flex: 0 0 auto; }
+.rows dd { margin: 0; font-weight: 600; text-align: right; color: var(--accent); }
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ghost { height: 52px; border-radius: 8px; border: 1px solid var(--accent); background: #fff; color: var(--accent); font-weight: 600; cursor: pointer; }
+.ghost:hover { background: var(--tile); }
+
+/* 푸터 */
+.foot { background: var(--accent); color: #cfe0d4; font-size: 13px; padding: 20px max(20px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); }
+.foot p { max-width: 420px; margin: 0 auto; }
+.toast { position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--accent); color: #fff; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; z-index: 30; }
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-card, .shuffling .flip, .screen { animation: none !important; }
+  .flip, .reading, .backdrop { transition: none !important; }
+}
+</style>
+</head>
+<body>
+<header class="gnb">
+  <a class="logo" href="#" aria-label="히즈빈스 홈">HisBeans</a>
+  <div class="gnb-icons" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </div>
+</header>
+
+<main>
+  <!-- 0. 인트로 -->
+  <section class="screen intro" id="s0">
+    <div class="date" aria-label="오늘 날짜">
+      <div class="row"><span class="n" id="dY">2026</span><span class="u">year</span></div>
+      <div class="row"><span class="n" id="dM">10</span><span class="u">month</span></div>
+      <div class="row end"><span class="n" id="dD">21</span><span class="u">day</span></div>
+      <div class="intro-card"><img id="introImg" alt="별이 뜬 초록 하늘과 언덕, 가운데 흰 커피 원두와 올리브 가지가 그려진 카드"></div>
+    </div>
+    <p class="eyebrow">당신을 위한</p>
+    <h1 class="headline">말씀으로 읽는 오늘의 한 잔</h1>
+    <button class="cta" id="start" type="button">오늘의 카드 만들기</button>
+  </section>
+
+  <!-- 1. 단어 -->
+  <section class="screen" id="s1" hidden>
+    <div class="stephead"><button class="back" type="button" data-back="0" aria-label="이전"><svg viewBox="0 0 24 24"><path d="M20 12H4M10 6l-6 6 6 6"/></svg></button><div class="dots" data-step="1"></div></div>
+    <h2 class="q">오늘의 단어를 고르세요</h2>
+    <div class="grid" id="words" role="group" aria-label="오늘의 단어"></div>
+    <button class="cta" id="next1" type="button" disabled>다음</button>
+  </section>
+
+  <!-- 2. 기분 -->
+  <section class="screen" id="s2" hidden>
+    <div class="stephead"><button class="back" type="button" data-back="1" aria-label="이전"><svg viewBox="0 0 24 24"><path d="M20 12H4M10 6l-6 6 6 6"/></svg></button><div class="dots" data-step="2"></div></div>
+    <h2 class="q">지금 기분은 어떠신가요?</h2>
+    <div class="wheel" id="wheel" tabindex="0" aria-label="기분 선택. 위아래 화살표로 바꿀 수 있어요"><ul id="moods"></ul></div>
+    <button class="cta" id="next2" type="button">다음</button>
+  </section>
+
+  <!-- 3. 패턴 -->
+  <section class="screen" id="s3" hidden>
+    <div class="stephead"><button class="back" type="button" data-back="2" aria-label="이전"><svg viewBox="0 0 24 24"><path d="M20 12H4M10 6l-6 6 6 6"/></svg></button><div class="dots" data-step="3"></div></div>
+    <h2 class="q">마음이 가는 패턴을 고르세요</h2>
+    <div class="pats" id="pats" role="group" aria-label="패턴"></div>
+    <button class="cta" id="make" type="button" disabled>오늘의 카드 만들기</button>
+  </section>
+
+  <!-- 4. 셔플 · 결과 -->
+  <section class="screen shuffle" id="s4" hidden>
+    <h2 id="shTitle">원두를 다 갈았어요.<br>이제 내릴 차례예요.</h2>
+    <div class="stage" id="stage">
+      <div class="flip" id="flip" role="button" tabindex="0" aria-label="카드 뒤집기">
+        <div class="face cardback"><canvas id="stars"></canvas><span class="t1">오늘의<br>말씀</span><span class="t2">오늘의<br>한 잔</span></div>
+        <div class="face front" id="front"></div>
+      </div>
+    </div>
+    <p class="tap" id="tapHint">카드를 눌러 뒤집어 보세요</p>
+    <div class="reading" id="reading"></div>
+  </section>
+</main>
+
+<div class="backdrop" id="backdrop"><img id="backdropImg" alt=""></div>
+
+<footer class="foot"><p>히즈빈스는 장애가 있는 바리스타와 로스터가 함께 커피를 만드는 브랜드예요. 말씀 본문은 개역한글판을 따랐고, 해설과 추천은 히즈빈스가 새로 썼어요.</p></footer>
+
+<script src="verses.js"></script>
+<script>
+const CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3GDwUqRVPlghI0cHBBQNPnsYSdl/";
+const img = (f) => CDN + f + "_min.webp";
+const INTRO = img("hf_20261021_053753_b63cf008-043f-4fc8-b070-b013268839e6");
+const PATTERNS = [
+  { name: "커피 체리", src: img("hf_20261021_053751_026d1df6-f87f-45ff-838f-338726785f9c"), color: "#3e8e5a" },
+  { name: "잔 위에서", src: img("hf_20261021_053752_efae0bd2-099e-47e5-9fb0-f4a146fc4e42"), color: "#1d462a" },
+  { name: "체커보드", src: img("hf_20261021_053752_c35565f8-6a8e-4aa1-981b-21fb326b036e"), color: "#c9e3cf" },
+  { name: "하트", src: img("hf_20261021_053814_096d3504-4b57-42de-9025-52aacd5ffd2c"), color: "#2f7a47" },
+  { name: "커피 잎", src: img("hf_20261021_053815_05e4c23c-5dcb-416f-afbc-50f9f6dfcb5c"), color: "#1d462a" },
+  { name: "잔 속", src: img("hf_20261021_053814_10b8c742-c7a2-46b6-8bb1-f667f2a98374"), color: "#5aa86f" },
+  { name: "원두", src: img("hf_20261021_053814_e482c45a-23b4-4109-9966-4e18978ece8e"), color: "#123620" },
+  { name: "올리브", src: img("hf_20261021_054026_af98e8f1-9730-4b13-8c46-9441439dab67"), color: "#3e8e5a" }
+];
+
+const { WORDS, MOODS, MOOD_ADJ, MOOD_NOTE, VERSES } = window.HB_DATA;
+
+const $ = (id) => document.getElementById(id);
+const now = new Date();
+const Y = now.getFullYear(), M = now.getMonth() + 1, D = now.getDate();
+const dateKey = `${Y}-${M}-${D}`;
+$("dY").textContent = Y; $("dM").textContent = String(M).padStart(2, "0"); $("dD").textContent = String(D).padStart(2, "0");
+$("introImg").src = INTRO;
+$("introImg").addEventListener("error", (e) => { e.target.parentElement.style.background = "linear-gradient(180deg,#1d462a 0 58%,#3e8e5a 58%)"; e.target.remove(); });
+
+const state = { word: null, mood: MOODS[2], pat: null };
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function show(n) {
+  for (let i = 0; i <= 4; i++) $("s" + i).hidden = i !== n;
+  window.scrollTo(0, 0);
+  if (n === 2) centerMood(state.mood, false);
+  if (n === 4) startShuffle();
+  if (n !== 4) { $("backdrop").classList.remove("on"); }
+}
+
+// 스텝 점
+document.querySelectorAll(".dots").forEach((el) => {
+  const step = +el.dataset.step;
+  el.innerHTML = [1, 2, 3].map((i) => `${i > 1 ? `<span class="bar ${i <= step ? "done" : ""}"></span>` : ""}<span class="dot ${i < step ? "done" : i === step ? "on" : ""}"><span>${i}</span></span>`).join("");
+});
+document.querySelectorAll("[data-back]").forEach((b) => b.addEventListener("click", () => show(+b.dataset.back)));
+$("start").addEventListener("click", () => show(1));
+
+// 1. 단어
+WORDS.forEach((w) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "tile"; b.textContent = w; b.id = "w-" + w;
+  b.setAttribute("aria-pressed", "false");
+  b.addEventListener("click", () => {
+    state.word = w;
+    document.querySelectorAll(".tile").forEach((t) => t.setAttribute("aria-pressed", String(t === b)));
+    $("next1").disabled = false;
+  });
+  $("words").appendChild(b);
+});
+$("next1").addEventListener("click", () => show(2));
+
+// 2. 기분 휠 (무한 스크롤처럼 목록을 5번 반복)
+const REP = 5;
+const ul = $("moods");
+for (let r = 0; r < REP; r++) MOODS.forEach((m) => { const li = document.createElement("li"); li.textContent = m; li.dataset.m = m; ul.appendChild(li); });
+const items = [...ul.children];
+const wheel = $("wheel");
+const ITEM = 80;
+function centerMood(m, smooth) {
+  const idx = Math.floor(REP / 2) * MOODS.length + MOODS.indexOf(m);
+  wheel.scrollTo({ top: idx * ITEM, behavior: smooth && !reduce ? "smooth" : "auto" });
+  paint();
+}
+function paint() {
+  const idx = Math.round(wheel.scrollTop / ITEM);
+  items.forEach((li, i) => { li.classList.toggle("cur", i === idx); li.classList.toggle("near", Math.abs(i - idx) === 1); });
+  if (items[idx]) state.mood = items[idx].dataset.m;
+}
+let wt;
+wheel.addEventListener("scroll", () => {
+  paint();
+  clearTimeout(wt);
+  wt = setTimeout(() => { // 가장자리에 가까워지면 가운데 묶음으로 조용히 되돌림
+    const idx = Math.round(wheel.scrollTop / ITEM);
+    if (idx < MOODS.length || idx >= (REP - 1) * MOODS.length) centerMood(state.mood, false);
+  }, 150);
+}, { passive: true });
+items.forEach((li, i) => li.addEventListener("click", () => wheel.scrollTo({ top: i * ITEM, behavior: reduce ? "auto" : "smooth" })));
+wheel.addEventListener("keydown", (e) => {
+  if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+  e.preventDefault();
+  wheel.scrollBy({ top: e.key === "ArrowDown" ? ITEM : -ITEM, behavior: reduce ? "auto" : "smooth" });
+});
+$("next2").addEventListener("click", () => show(3));
+
+// 3. 패턴
+PATTERNS.forEach((p, i) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "pat"; b.id = "p-" + i;
+  b.setAttribute("aria-pressed", "false"); b.setAttribute("aria-label", p.name + " 패턴");
+  b.style.background = p.color;
+  b.innerHTML = `<img src="${p.src}" alt="" loading="lazy">`;
+  b.querySelector("img").addEventListener("error", (e) => e.target.remove());
+  b.addEventListener("click", () => {
+    state.pat = i;
+    document.querySelectorAll(".pat").forEach((t) => t.setAttribute("aria-pressed", String(t === b)));
+    $("pats").classList.add("has-pick");
+    $("make").disabled = false;
+  });
+  $("pats").appendChild(b);
+});
+$("make").addEventListener("click", () => show(4));
+
+// 별 캔버스
+function drawStars() {
+  const c = $("stars"), r = c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  c.width = r.width * dpr; c.height = r.height * dpr;
+  const g = c.getContext("2d"); g.scale(dpr, dpr);
+  let s = 7;
+  const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+  for (let i = 0; i < 26; i++) {
+    const x = rnd() * r.width, y = rnd() * r.height * 0.9, big = rnd() > 0.75;
+    g.fillStyle = rnd() > 0.6 ? "rgba(220,235,223,.85)" : "rgba(255,255,255,.8)";
+    if (big) { const k = 5; g.beginPath(); g.moveTo(x, y - k); g.lineTo(x + 1.2, y - 1.2); g.lineTo(x + k, y); g.lineTo(x + 1.2, y + 1.2); g.lineTo(x, y + k); g.lineTo(x - 1.2, y + 1.2); g.lineTo(x - k, y); g.lineTo(x - 1.2, y - 1.2); g.fill(); }
+    else { g.beginPath(); g.arc(x, y, 1.1, 0, Math.PI * 2); g.fill(); }
+  }
+}
+
+// 결과
+function hash(str) { let h = 2166136261; for (const ch of str) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+let lastText = "";
+function buildResult() {
+  const seed = hash(`${dateKey}|${state.word}|${state.mood}|${state.pat}`);
+  const line = VERSES[state.word][seed % 2];
+  const p = PATTERNS[state.pat];
+  $("front").innerHTML = `
+    <div class="art" style="background:${p.color}"><img src="${p.src}" alt="" onerror="this.remove()"><span class="chip">#${state.word}</span></div>
+    <div class="body">
+      <div><span class="lbl">오늘의 말씀</span><blockquote>${line.v}</blockquote><span class="ref">${line.ref}</span></div>
+      <div class="meta"><span>HisBeans</span><span>${Y}.${String(M).padStart(2, "0")}.${String(D).padStart(2, "0")}</span></div>
+    </div>`;
+  $("reading").innerHTML = `
+    <p class="eyebrow">${MOOD_ADJ[state.mood] || state.mood + "한"} 오늘의 한 잔</p>
+    <h3>${MOOD_NOTE[state.mood]}</h3>
+    <p>${line.r}</p>
+    <dl class="rows">
+      <div><dt>오늘의 한 잔</dt><dd>${line.d}</dd></div>
+      <div><dt>오늘의 작은 실천</dt><dd>${line.a}</dd></div>
+    </dl>
+    <div class="duo">
+      <button class="ghost" type="button" id="again">다시 하기</button>
+      <button class="cta" style="width:100%" type="button" id="copy">말씀 복사</button>
+    </div>`;
+  lastText = `[히즈빈스 말씀 카드 · ${Y}.${M}.${D}]\n#${state.word} · ${state.mood}\n“${line.v}” (${line.ref})\n${line.r}\n오늘의 한 잔: ${line.d}\n오늘의 작은 실천: ${line.a}`;
+  $("again").addEventListener("click", reset);
+  $("copy").addEventListener("click", copy);
+  $("backdropImg").src = p.src;
+}
+function startShuffle() {
+  const flip = $("flip");
+  flip.classList.remove("open");
+  $("reading").classList.remove("on");
+  $("shTitle").innerHTML = "원두를 다 갈았어요.<br>이제 내릴 차례예요.";
+  $("tapHint").hidden = false;
+  buildResult();
+  requestAnimationFrame(drawStars);
+  $("stage").classList.add("shuffling");
+  setTimeout(() => $("stage").classList.remove("shuffling"), reduce ? 0 : 1800);
+}
+function openCard() {
+  const flip = $("flip");
+  if (flip.classList.contains("open")) return;
+  flip.classList.add("open");
+  $("tapHint").hidden = true;
+  $("shTitle").innerHTML = "오늘의 카드가<br>나왔어요.";
+  $("backdrop").classList.add("on");
+  $("reading").classList.add("on");
+}
+$("flip").addEventListener("click", openCard);
+$("flip").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openCard(); } });
+
+function reset() {
+  state.word = null; state.pat = null; state.mood = MOODS[2];
+  document.querySelectorAll(".tile, .pat").forEach((t) => t.setAttribute("aria-pressed", "false"));
+  $("pats").classList.remove("has-pick");
+  $("next1").disabled = true; $("make").disabled = true;
+  show(0);
+}
+function toast(msg) { const t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 1800); }
+function copy() {
+  const fallback = () => { const ta = document.createElement("textarea"); ta.value = lastText; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); toast("말씀을 복사했어요"); } catch { toast("복사하지 못했어요"); } ta.remove(); };
+  if (navigator.clipboard) navigator.clipboard.writeText(lastText).then(() => toast("말씀을 복사했어요"), fallback); else fallback();
+}
+</script>
+</body>
+</html>
