@@ -1,0 +1,300 @@
+<title>히즈빈스 오늘의 한 문장</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 카페 바 위에 놓인 한 장의 '추출 노트'. 원두를 고르면 노트가 내려와 문장을 보여준다. */
+:root {
+  --paper: #f1f0eb;
+  --card: #fbfaf6;
+  --ink: #2b211c;
+  --muted: #74685f;
+  --line: #ddd7cd;
+  --cherry: #a5302a;
+  --leaf: #3d5a45;
+  --crema: #c8955c;
+  --shadow: 0 1px 0 rgba(43,33,28,.04), 0 18px 40px -24px rgba(43,33,28,.35);
+  --f-sentence: "Gowun Batang", "Nanum Myeongjo", "AppleMyungjo", serif;
+  --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1a1613; --card: #231d19; --ink: #efe8df; --muted: #a8998c; --line: #3a312b;
+    --cherry: #e0675d; --leaf: #8fb79a; --crema: #d9a86f;
+    --shadow: 0 1px 0 rgba(0,0,0,.2), 0 18px 40px -24px rgba(0,0,0,.8);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1a1613; --card: #231d19; --ink: #efe8df; --muted: #a8998c; --line: #3a312b;
+  --cherry: #e0675d; --leaf: #8fb79a; --crema: #d9a86f;
+  --shadow: 0 1px 0 rgba(0,0,0,.2), 0 18px 40px -24px rgba(0,0,0,.8);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--f-body); font-size: 15px; line-height: 1.7;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 64px;
+  word-break: keep-all;
+}
+.wrap { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+
+header { display: flex; flex-direction: column; gap: 12px; }
+.brand { font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand b { color: var(--cherry); font-weight: 500; }
+h1 { font-family: var(--f-sentence); font-weight: 700; font-size: clamp(30px, 7vw, 42px); line-height: 1.3; margin: 0; text-wrap: balance; }
+.lede { margin: 0; color: var(--muted); max-width: 34em; }
+
+.step-label { font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; color: var(--muted); margin: 0 0 14px; }
+
+.name-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.name-row label { flex-basis: 100%; font-size: 13px; color: var(--muted); }
+#nameInput {
+  flex: 1 1 200px; min-width: 0; font: inherit; color: var(--ink); background: var(--card);
+  border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px;
+}
+#nameInput:focus-visible { outline: 2px solid var(--leaf); outline-offset: 1px; }
+
+.beans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (max-width: 460px) { .beans { grid-template-columns: repeat(2, 1fr); } }
+.bean {
+  appearance: none; border: 1px solid var(--line); background: var(--card); color: var(--ink);
+  border-radius: 10px; padding: 16px 14px 14px; text-align: left; cursor: pointer; font: inherit;
+  display: flex; flex-direction: column; gap: 6px; transition: transform .2s ease, border-color .2s ease;
+}
+.bean:hover { transform: translateY(-2px); border-color: var(--crema); }
+.bean:focus-visible { outline: 2px solid var(--leaf); outline-offset: 2px; }
+.bean[aria-pressed="true"] { border-color: var(--cherry); box-shadow: inset 0 0 0 1px var(--cherry); }
+.bean svg { width: 26px; height: 26px; }
+.bean .origin { font-weight: 600; font-size: 15px; }
+.bean .note { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+.brew {
+  margin-top: 18px; width: 100%; appearance: none; border: 0; border-radius: 8px; cursor: pointer;
+  background: var(--ink); color: var(--paper); font: 600 15px var(--f-body); padding: 14px 18px;
+}
+.brew:disabled { opacity: .35; cursor: not-allowed; }
+.brew:focus-visible { outline: 2px solid var(--cherry); outline-offset: 2px; }
+
+/* 추출 노트 */
+.note-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 4px; box-shadow: var(--shadow);
+  position: relative; overflow: hidden;
+}
+.note-card::before { /* 영수증 펀칭 */
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 8px;
+  background: radial-gradient(circle at 8px 0, var(--paper) 5px, transparent 5.5px) 0 0 / 16px 8px repeat-x;
+}
+.note-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 22px 24px 14px; border-bottom: 1px dashed var(--line); font-family: var(--f-mono); font-size: 12px; color: var(--muted); letter-spacing: .06em; }
+.note-body { padding: 28px 24px 8px; display: flex; flex-direction: column; gap: 22px; }
+.tag { font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; color: var(--cherry); }
+blockquote { margin: 0; font-family: var(--f-sentence); font-size: clamp(22px, 5.2vw, 27px); line-height: 1.6; text-wrap: balance; }
+.reading { margin: 0; max-width: 34em; }
+.recipe { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.recipe div { padding: 12px 0; display: flex; flex-direction: column; gap: 2px; }
+.recipe div + div { padding-left: 14px; border-left: 1px solid var(--line); }
+.recipe dt { font-size: 12px; color: var(--muted); }
+.recipe dd { margin: 0; font-family: var(--f-mono); font-size: 17px; font-variant-numeric: tabular-nums; }
+.pairs { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 460px) { .pairs { grid-template-columns: 1fr; } }
+.pairs h3 { margin: 0 0 4px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: .04em; }
+.pairs p { margin: 0; }
+.pairs .drink { font-weight: 600; }
+.note-foot { padding: 18px 24px 24px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; border-top: 1px dashed var(--line); margin-top: 18px; }
+.sign { font-family: var(--f-sentence); font-size: 14px; color: var(--muted); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.ghost { appearance: none; border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 6px; font: 500 13px var(--f-body); padding: 8px 12px; cursor: pointer; }
+.ghost:hover { border-color: var(--ink); }
+.ghost:focus-visible { outline: 2px solid var(--leaf); outline-offset: 2px; }
+.sample-flag { font-family: var(--f-mono); font-size: 11px; color: var(--leaf); }
+
+.drip { height: 3px; background: linear-gradient(90deg, var(--crema), var(--cherry)); transform-origin: left; transform: scaleX(0); }
+.brewing .drip { animation: drip 1.4s ease-in-out forwards; }
+@keyframes drip { to { transform: scaleX(1); } }
+.reveal { animation: rise .6s ease both; }
+@keyframes rise { from { opacity: .2; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .reveal, .brewing .drip, .bean { animation: none !important; transition: none !important; } .drip { transform: scaleX(1); } }
+
+.about { border-top: 1px solid var(--line); padding-top: 22px; font-size: 13.5px; color: var(--muted); display: flex; flex-direction: column; gap: 8px; }
+.about p { margin: 0; max-width: 40em; }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 999px; font-size: 13px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand"><span>HISBEANS · <b>오늘의 한 문장</b></span><span id="today"></span></div>
+    <h1>원두 한 알을 고르면,<br>오늘의 문장을 내려드려요</h1>
+    <p class="lede">운세라고 부르지만, 사실은 바리스타가 건네는 한마디에 가까워요. 오늘 마음이 가는 원두를 골라 주세요. 같은 날, 같은 이름, 같은 원두라면 언제나 같은 문장이 나와요.</p>
+  </header>
+
+  <section aria-labelledby="pickLabel">
+    <p class="step-label" id="pickLabel">STEP 1 · 이름과 원두</p>
+    <div class="name-row">
+      <label for="nameInput">불러드릴 이름 (선택)</label>
+      <input id="nameInput" type="text" maxlength="12" placeholder="예: 지은" autocomplete="off">
+    </div>
+    <div class="beans" id="beans" role="group" aria-label="원두 선택"></div>
+    <button class="brew" id="brew" type="button" disabled>원두를 먼저 골라 주세요</button>
+  </section>
+
+  <section aria-live="polite" id="resultSection">
+    <p class="step-label">STEP 2 · 오늘의 추출 노트 <span class="sample-flag" id="sampleFlag">— 예시 노트예요. 원두를 고르면 바뀝니다</span></p>
+    <article class="note-card" id="note">
+      <div class="drip" id="drip"></div>
+      <div class="note-head"><span id="noteNo">NO. 0000</span><span id="noteFor">FOR. 오늘의 손님</span></div>
+      <div class="note-body" id="noteBody"></div>
+      <div class="note-foot">
+        <span class="sign">— 히즈빈스 바 앞에서</span>
+        <div class="actions">
+          <button class="ghost" id="copyBtn" type="button">문장 복사</button>
+          <button class="ghost" id="againBtn" type="button">다른 원두 고르기</button>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <footer class="about">
+    <p>히즈빈스는 장애가 있는 바리스타와 로스터가 함께 커피를 만드는 브랜드예요. 잘하는 것에 먼저 눈을 맞추면, 한 사람의 하루가 달라진다고 믿어요.</p>
+    <p>이 페이지의 문장은 히즈빈스의 톤을 빌려 새로 쓴 것이고, 운세처럼 즐겨 주시면 충분해요.</p>
+  </footer>
+</div>
+
+<script>
+const BEANS = [
+  { id: "ethiopia", origin: "에티오피아", note: "꽃향, 밝은 산미", color: "#c8955c" },
+  { id: "colombia", origin: "콜롬비아", note: "캐러멜, 둥근 단맛", color: "#9a6438" },
+  { id: "brazil", origin: "브라질", note: "견과, 묵직한 바디", color: "#6e4527" },
+  { id: "kenya", origin: "케냐", note: "베리, 또렷한 끝맛", color: "#a5302a" },
+  { id: "guatemala", origin: "과테말라", note: "다크초콜릿, 스모키", color: "#4a2e1f" },
+  { id: "decaf", origin: "디카페인", note: "부드럽게, 천천히", color: "#3d5a45" }
+];
+
+// 문장 · 해설 · 오늘의 한 잔 · 작은 실천
+const LINES = [
+  { tag: "속도", s: "천천히 내린 커피가 더 멀리 향을 보낸다.",
+    r: "오늘은 서두를수록 맛이 흐려지는 날이에요. 한 박자 늦게 대답해도 괜찮아요. 기다린 만큼 말이 진해져요.",
+    d: "핸드드립 한 잔", a: "답장 하나를 10분 뒤에 보내 보기" },
+  { tag: "강점", s: "잘 못하는 것 열 개보다, 잘하는 것 하나가 하루를 끌고 간다.",
+    r: "부족한 부분을 메우느라 지쳤다면 오늘은 방향을 바꿔 보세요. 내가 이미 잘하는 일 하나에 시간을 더 주면 나머지가 따라와요.",
+    d: "에스프레소 도피오", a: "내가 잘하는 것 세 가지를 적어 보기" },
+  { tag: "함께", s: "한 잔의 커피에는 언제나 여러 사람의 손이 담겨 있다.",
+    r: "혼자 해낸 것 같은 일에도 누군가의 손이 닿아 있어요. 오늘 떠오르는 한 사람에게 고맙다고 말하기 좋은 날이에요.",
+    d: "따뜻한 카페라테", a: "고마운 사람에게 짧은 메시지 보내기" },
+  { tag: "온도", s: "너무 뜨거우면 향이 숨고, 조금 식어야 맛이 보인다.",
+    r: "열정이 넘칠 때 오히려 중요한 걸 놓치기 쉬워요. 오늘 결정은 한 김 식힌 뒤에 내려도 늦지 않아요.",
+    d: "아이스 아메리카노", a: "큰 결정 하나를 내일 아침으로 미루기" },
+  { tag: "반복", s: "어제와 같은 레시피로 내렸는데, 오늘은 조금 더 맛있다.",
+    r: "매일 하던 일이 지루하게 느껴져도, 그 반복이 손을 길러요. 오늘의 작은 차이를 알아차리는 것이 실력이에요.",
+    d: "오늘의 원두 아메리카노", a: "매일 하는 일 하나를 평소보다 정성껏 해 보기" },
+  { tag: "다름", s: "같은 원두도 손이 다르면 맛이 다르다. 그래서 커피는 재미있다.",
+    r: "남과 다르게 하는 방식이 틀린 게 아니에요. 오늘은 내 방식대로 해 본 일이 좋은 결과를 낼 거예요.",
+    d: "콜드브루", a: "익숙한 길 말고 다른 길로 걸어 보기" },
+  { tag: "쉼", s: "원두도 볶은 뒤엔 며칠을 쉬어야 제맛이 난다.",
+    r: "멈춰 있는 시간이 낭비처럼 느껴질 수 있어요. 하지만 오늘의 쉼은 다음 맛을 위한 숙성이에요.",
+    d: "디카페인 라테", a: "휴대폰 없이 15분 앉아 있기" },
+  { tag: "시작", s: "첫 샷은 버려도 괜찮다. 그래야 다음 샷이 맞는다.",
+    r: "처음부터 완벽할 필요는 없어요. 오늘 시작하는 일이 있다면 어설퍼도 일단 한 번 내려 보세요.",
+    d: "에스프레소 콘파나", a: "미뤄 둔 일의 첫 5분만 해 보기" },
+  { tag: "대화", s: "주문을 잘 듣는 바리스타가 커피도 잘 내린다.",
+    r: "오늘은 말하기보다 듣기에서 운이 열려요. 상대가 끝까지 말하도록 기다려 주면 생각지 못한 답을 듣게 돼요.",
+    d: "바닐라 라테", a: "대화에서 질문 하나를 더 해 보기" },
+  { tag: "자리", s: "누구에게나 자기에게 맞는 자리가 하나쯤 있다. 바 뒤든, 로스터 앞이든.",
+    r: "지금 자리가 불편하다면 내가 부족해서가 아닐 수 있어요. 나에게 맞는 자리를 찾는 일도 용기예요.",
+    d: "플랫화이트", a: "내가 편안했던 순간을 하나 떠올려 보기" },
+  { tag: "향", s: "좋은 커피는 마시기 전에 먼저 알려 준다. 향으로.",
+    r: "말보다 태도가 먼저 닿는 날이에요. 오늘 내 표정과 손길이 누군가에게 먼저 인사를 건넬 거예요.",
+    d: "카푸치노", a: "처음 만나는 사람에게 먼저 웃어 보기" },
+  { tag: "균형", s: "산미와 단맛은 싸우지 않는다. 서로를 돋보이게 할 뿐.",
+    r: "의견이 달라 부딪히는 일이 있어도, 결국 더 나은 맛이 될 거예요. 다른 생각을 반겨 보세요.",
+    d: "카페 모카", a: "나와 다른 의견에 '좋네요'라고 먼저 말해 보기" }
+];
+
+const $ = (id) => document.getElementById(id);
+const beanSvg = (c) => `<svg viewBox="0 0 26 26" aria-hidden="true"><ellipse cx="13" cy="13" rx="8.5" ry="11" transform="rotate(28 13 13)" fill="${c}"/><path d="M8.5 5.5c4 3.5 5 11 9 15" stroke="var(--card)" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`;
+
+const now = new Date();
+const dateKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+const days = ["일","월","화","수","목","금","토"];
+$("today").textContent = `${now.getFullYear()}. ${now.getMonth()+1}. ${now.getDate()} (${days[now.getDay()]})`;
+
+function hash(str) { let h = 2166136261; for (const ch of str) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+
+let picked = null;
+let lastText = "";
+
+const beansEl = $("beans");
+BEANS.forEach((b) => {
+  const btn = document.createElement("button");
+  btn.type = "button"; btn.className = "bean"; btn.id = `bean-${b.id}`;
+  btn.setAttribute("aria-pressed", "false");
+  btn.innerHTML = `${beanSvg(b.color)}<span class="origin">${b.origin}</span><span class="note">${b.note}</span>`;
+  btn.addEventListener("click", () => {
+    picked = b;
+    beansEl.querySelectorAll(".bean").forEach((x) => x.setAttribute("aria-pressed", String(x === btn)));
+    $("brew").disabled = false;
+    $("brew").textContent = `${b.origin} 원두로 오늘의 문장 내리기`;
+  });
+  beansEl.appendChild(btn);
+});
+
+function render(bean, name, isSample) {
+  const seed = hash(`${dateKey}|${name}|${bean.id}`);
+  const line = LINES[seed % LINES.length];
+  const grams = 16 + (seed % 5);            // 16–20g
+  const ratio = 2 + ((seed >> 3) % 2) * 0.5; // 1:2 또는 1:2.5
+  const sec = 25 + ((seed >> 5) % 8);       // 25–32초
+  const who = name ? `${name} 님` : "오늘의 손님";
+  $("noteNo").textContent = `NO. ${String(seed % 10000).padStart(4, "0")}`;
+  $("noteFor").textContent = `FOR. ${who}`;
+  $("sampleFlag").hidden = !isSample;
+  $("noteBody").innerHTML = `
+    <span class="tag">#${line.tag} · ${bean.origin}</span>
+    <blockquote>${line.s}</blockquote>
+    <p class="reading">${name ? `${name} 님, ` : ""}${line.r}</p>
+    <dl class="recipe">
+      <div><dt>원두</dt><dd>${grams}g</dd></div>
+      <div><dt>추출 비율</dt><dd>1:${ratio}</dd></div>
+      <div><dt>추출 시간</dt><dd>${sec}초</dd></div>
+    </dl>
+    <div class="pairs">
+      <div><h3>오늘의 한 잔</h3><p class="drink">${line.d}</p></div>
+      <div><h3>오늘의 작은 실천</h3><p>${line.a}</p></div>
+    </div>`;
+  lastText = `[히즈빈스 오늘의 한 문장 · ${dateKey}]\n“${line.s}”\n${line.r}\n오늘의 한 잔: ${line.d}\n오늘의 작은 실천: ${line.a}`;
+  const body = $("noteBody");
+  body.classList.remove("reveal"); void body.offsetWidth; body.classList.add("reveal");
+}
+
+$("brew").addEventListener("click", () => {
+  if (!picked) return;
+  const note = $("note");
+  note.classList.remove("brewing"); void note.offsetWidth; note.classList.add("brewing");
+  render(picked, $("nameInput").value.trim(), false);
+  $("resultSection").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+});
+
+$("againBtn").addEventListener("click", () => {
+  $("pickLabel").scrollIntoView({ behavior: "smooth", block: "start" });
+  beansEl.querySelector(".bean")?.focus({ preventScroll: true });
+});
+
+function toast(msg) {
+  const t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 1800);
+}
+$("copyBtn").addEventListener("click", () => {
+  navigator.clipboard.writeText(lastText).then(() => toast("문장을 복사했어요"), () => {
+    const r = document.createRange(); r.selectNodeContents($("noteBody"));
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    toast("문장을 선택해 두었어요. 복사해서 쓰세요");
+  });
+});
+
+// 첫 화면: 예시 노트
+render(BEANS[1], "", true);
+</script>
