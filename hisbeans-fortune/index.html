@@ -1,5 +1,9 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>히즈빈스 오늘의 한 문장</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -123,14 +127,37 @@ blockquote { margin: 0; font-family: var(--f-sentence); font-size: clamp(22px, 5
 .about { border-top: 1px solid var(--line); padding-top: 22px; font-size: 13.5px; color: var(--muted); display: flex; flex-direction: column; gap: 8px; }
 .about p { margin: 0; max-width: 40em; }
 .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 999px; font-size: 13px; }
-</style>
 
+/* Higgsfield 생성 이미지 */
+.hero-fig { margin: 0; border-radius: 4px; overflow: hidden; background: var(--line); aspect-ratio: 3 / 2; max-width: 100%; box-shadow: var(--shadow); }
+.hero-fig img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hero-fig figcaption { font-family: var(--f-mono); font-size: 11px; color: var(--muted); padding: 8px 2px 0; background: var(--paper); }
+.bean { padding: 0 0 14px; overflow: hidden; }
+.bean .art { aspect-ratio: 1 / 1; width: 100%; background: #f3efe7; display: grid; place-items: center; overflow: hidden; }
+.bean .art img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+.bean:hover .art img { transform: scale(1.05); }
+.bean .art svg { width: 34px; height: 34px; }
+.bean .origin, .bean .note { padding: 0 14px; }
+.bean .origin { padding-top: 6px; }
+.note-top { display: flex; gap: 18px; align-items: flex-start; justify-content: space-between; }
+.note-top .txt { display: flex; flex-direction: column; gap: 14px; min-width: 0; flex: 1; }
+.note-art { flex: 0 0 96px; width: 96px; aspect-ratio: 1 / 1; border-radius: 50%; overflow: hidden; background: #f3efe7; border: 1px solid var(--line); }
+.note-art img { width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 460px) { .note-art { flex-basis: 64px; width: 64px; } }
+@media (prefers-reduced-motion: reduce) { .bean .art img { transition: none; } }
+</style>
+</head>
+<body>
 <div class="wrap">
   <header>
     <div class="brand"><span>HISBEANS · <b>오늘의 한 문장</b></span><span id="today"></span></div>
     <h1>원두 한 알을 고르면,<br>오늘의 문장을 내려드려요</h1>
     <p class="lede">운세라고 부르지만, 사실은 바리스타가 건네는 한마디에 가까워요. 오늘 마음이 가는 원두를 골라 주세요. 같은 날, 같은 이름, 같은 원두라면 언제나 같은 문장이 나와요.</p>
   </header>
+
+  <figure class="hero-fig">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3GDwUqRVPlghI0cHBBQNPnsYSdl/hf_20261021_044219_42bef602-212f-455e-90f3-421005632be9.png" alt="아침 햇살이 드는 나무 바 위의 에스프레소 한 잔과 원두, 드립 주전자, 빈 메모 카드" loading="eager" onerror="this.closest('figure').hidden=true">
+  </figure>
 
   <section aria-labelledby="pickLabel">
     <p class="step-label" id="pickLabel">STEP 1 · 이름과 원두</p>
@@ -165,6 +192,7 @@ blockquote { margin: 0; font-family: var(--f-sentence); font-size: clamp(22px, 5
 </div>
 
 <script>
+const IMG = {"ethiopia": "https://d8j0ntlcm91z4.cloudfront.net/user_3GDwUqRVPlghI0cHBBQNPnsYSdl/hf_20261021_044219_7c752d33-bfbe-405a-83b7-00c3d69487db_min.webp", "colombia": "https://d8j0ntlcm91z4.cloudfront.net/user_3GDwUqRVPlghI0cHBBQNPnsYSdl/hf_20261021_044248_38406134-ce51-4a67-a869-ab64b5421378_min.webp", "brazil": "https://d8j0ntlcm91z4.cloudfront.net/user_3GDwUqRVPlghI0cHBBQNPnsYSdl/hf_20261021_044219_5b44b58e-106d-4aea-8051-7640e2dcc0b6_min.webp", "kenya": "https://d8j0ntlcm91z4.cloudfront.net/user_3GDwUqRVPlghI0cHBBQNPnsYSdl/hf_20261021_044219_4db62635-90a0-4b5e-b0dd-e864dc0d35ed_min.webp", "guatemala": "https://d8j0ntlcm91z4.cloudfront.net/user_3GDwUqRVPlghI0cHBBQNPnsYSdl/hf_20261021_044248_a0869c38-1369-4b02-9e57-ecee729c2070_min.webp", "decaf": "https://d8j0ntlcm91z4.cloudfront.net/user_3GDwUqRVPlghI0cHBBQNPnsYSdl/hf_20261021_044248_5f500f44-c1cd-4c78-8a3f-fb641e6378bf_min.webp"};
 const BEANS = [
   { id: "ethiopia", origin: "에티오피아", note: "꽃향, 밝은 산미", color: "#c8955c" },
   { id: "colombia", origin: "콜롬비아", note: "캐러멜, 둥근 단맛", color: "#9a6438" },
@@ -232,7 +260,9 @@ BEANS.forEach((b) => {
   const btn = document.createElement("button");
   btn.type = "button"; btn.className = "bean"; btn.id = `bean-${b.id}`;
   btn.setAttribute("aria-pressed", "false");
-  btn.innerHTML = `${beanSvg(b.color)}<span class="origin">${b.origin}</span><span class="note">${b.note}</span>`;
+  btn.innerHTML = `<span class="art"><img src="${IMG[b.id]}" alt="" loading="lazy"></span><span class="origin">${b.origin}</span><span class="note">${b.note}</span>`;
+  const im = btn.querySelector("img");
+  im.addEventListener("error", () => { im.parentElement.innerHTML = beanSvg(b.color); });
   btn.addEventListener("click", () => {
     picked = b;
     beansEl.querySelectorAll(".bean").forEach((x) => x.setAttribute("aria-pressed", String(x === btn)));
@@ -253,8 +283,13 @@ function render(bean, name, isSample) {
   $("noteFor").textContent = `FOR. ${who}`;
   $("sampleFlag").hidden = !isSample;
   $("noteBody").innerHTML = `
-    <span class="tag">#${line.tag} · ${bean.origin}</span>
-    <blockquote>${line.s}</blockquote>
+    <div class="note-top">
+      <div class="txt">
+        <span class="tag">#${line.tag} · ${bean.origin}</span>
+        <blockquote>${line.s}</blockquote>
+      </div>
+      <div class="note-art"><img src="${IMG[bean.id]}" alt="${bean.origin} 원두 일러스트" onerror="this.parentElement.hidden=true"></div>
+    </div>
     <p class="reading">${name ? `${name} 님, ` : ""}${line.r}</p>
     <dl class="recipe">
       <div><dt>원두</dt><dd>${grams}g</dd></div>
@@ -298,3 +333,5 @@ $("copyBtn").addEventListener("click", () => {
 // 첫 화면: 예시 노트
 render(BEANS[1], "", true);
 </script>
+</body>
+</html>
