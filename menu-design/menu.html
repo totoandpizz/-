@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>HISBEANS Menu</title>
+<style>
+  @font-face { font-family: "Pretendard"; font-weight: 300; src: url(fonts/Pretendard-Light.woff2) format("woff2"); }
+  @font-face { font-family: "Pretendard"; font-weight: 400; src: url(fonts/Pretendard-Regular.woff2) format("woff2"); }
+  @font-face { font-family: "Pretendard"; font-weight: 500; src: url(fonts/Pretendard-Medium.woff2) format("woff2"); }
+  @font-face { font-family: "Pretendard"; font-weight: 600; src: url(fonts/Pretendard-SemiBold.woff2) format("woff2"); }
+
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f6f2ea;
+    --muted: #8a847a;
+    --line: #1a1a1a;
+  }
+  @page { size: 210mm 297mm; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 210mm; height: 297mm; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Pretendard", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .sheet {
+    position: relative;
+    width: 210mm; height: 297mm;
+    padding: 22mm 22mm 18mm;
+    display: flex; flex-direction: column;
+  }
+  /* thin inner frame echoing the logo's monoline stroke */
+  .sheet::before {
+    content: ""; position: absolute; inset: 9mm;
+    border: 0.35mm solid var(--line);
+    pointer-events: none;
+  }
+
+  header { text-align: center; padding-top: 6mm; }
+  header img { width: 112mm; display: block; margin: 0 auto; }
+  .sub {
+    margin-top: 7mm;
+    font-size: 9.5pt; font-weight: 400; letter-spacing: 0.42em;
+    color: var(--ink);
+  }
+  .sub span { color: var(--muted); }
+
+  .title {
+    display: flex; align-items: center; gap: 6mm;
+    margin: 17mm 0 4mm;
+    font-size: 11pt; font-weight: 500; letter-spacing: 0.6em;
+  }
+  .title::before, .title::after { content: ""; flex: 1; height: 0.3mm; background: var(--line); }
+
+  main { flex: 1; display: flex; flex-direction: column; }
+  .item {
+    display: grid;
+    grid-template-columns: 14mm 1fr 30mm;
+    align-items: center;
+    padding: 11mm 0;
+    border-bottom: 0.25mm solid var(--line);
+  }
+  .item:last-child { border-bottom: none; }
+  .num { font-size: 9pt; font-weight: 400; letter-spacing: 0.1em; color: var(--muted); align-self: start; padding-top: 2.2mm; }
+  .cat { font-size: 8.5pt; font-weight: 500; letter-spacing: 0.38em; color: var(--muted); margin-bottom: 3.5mm; }
+  .name { display: flex; align-items: baseline; gap: 4mm; flex-wrap: wrap; }
+  .ko { font-size: 23pt; font-weight: 600; letter-spacing: -0.01em; }
+  .en { font-size: 11pt; font-weight: 300; letter-spacing: 0.14em; text-transform: uppercase; }
+  .desc { margin-top: 3mm; font-size: 10pt; font-weight: 300; color: #4a463f; letter-spacing: 0.02em; }
+  .tags { display: flex; gap: 2.5mm; margin-top: 4.5mm; }
+  .tag {
+    font-size: 8.5pt; font-weight: 500; letter-spacing: 0.3em;
+    padding: 1.2mm 3.2mm 1.2mm 4mm;
+    border: 0.3mm solid var(--ink); border-radius: 10mm;
+  }
+  .tag.hot { background: var(--ink); color: var(--paper); }
+  .icon { justify-self: end; width: 24mm; height: 24mm; }
+  .icon svg { width: 100%; height: 100%; fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+  footer { text-align: center; padding-bottom: 4mm; }
+  .mark { display: inline-block; width: 9mm; height: 9mm; margin-bottom: 4mm; }
+  .mark svg { width: 100%; height: 100%; stroke: var(--ink); stroke-width: 1.6; }
+  .tagline { font-size: 10pt; font-weight: 400; letter-spacing: 0.08em; }
+  .small { margin-top: 2.5mm; font-size: 7.5pt; letter-spacing: 0.35em; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header>
+    <img src="hisbeans_logo.png" alt="HISBEANS">
+    <p class="sub">SPECIALTY COFFEE <span>·</span> 히즈빈스</p>
+  </header>
+
+  <div class="title">MENU</div>
+
+  <main>
+    <section class="item">
+      <div class="num">01</div>
+      <div>
+        <p class="cat">COFFEE</p>
+        <div class="name"><span class="ko">콜드브루</span><span class="en">Cold Brew</span></div>
+        <p class="desc">천천히 내려 깊고 부드러운 커피</p>
+        <div class="tags"><span class="tag">ICE</span><span class="tag hot">HOT</span></div>
+      </div>
+      <div class="icon">
+        <!-- glass with ice + steam -->
+        <svg viewBox="0 0 64 64">
+          <path d="M16 20 L20 58 H44 L48 20 Z"/>
+          <path d="M18.4 34 H45.6"/>
+          <rect x="24" y="38" width="7" height="7" rx="1"/>
+          <rect x="33" y="43" width="7" height="7" rx="1"/>
+          <path d="M26 6 c-3 3 3 5 0 9 M34 4 c-3 3 3 6 0 10 M42 6 c-3 3 3 5 0 9"/>
+        </svg>
+      </div>
+    </section>
+
+    <section class="item">
+      <div class="num">02</div>
+      <div>
+        <p class="cat">TEA</p>
+        <div class="name"><span class="ko">히비스커스티</span><span class="en">Hibiscus Tea</span></div>
+        <p class="desc">새콤하고 향긋한 붉은 꽃차</p>
+      </div>
+      <div class="icon">
+        <!-- five-petal hibiscus -->
+        <svg viewBox="0 0 64 64">
+          <g transform="translate(32 32)">
+            <path id="p" d="M0 -3 C-9 -10 -10 -24 0 -27 C10 -24 9 -10 0 -3 Z"/>
+            <use href="#p" transform="rotate(72)"/>
+            <use href="#p" transform="rotate(144)"/>
+            <use href="#p" transform="rotate(216)"/>
+            <use href="#p" transform="rotate(288)"/>
+            <path d="M0 0 L10 -14"/>
+            <circle cx="11" cy="-15.5" r="1.6"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <section class="item">
+      <div class="num">03</div>
+      <div>
+        <p class="cat">DESSERT</p>
+        <div class="name"><span class="ko">쿠키</span><span class="en">Cookie</span></div>
+        <p class="desc">커피와 함께 즐기는 쿠키</p>
+      </div>
+      <div class="icon">
+        <!-- cookie with a bite -->
+        <svg viewBox="0 0 64 64">
+          <path d="M54 26 a7 7 0 0 1 -6 -9 a7 7 0 0 1 -8 -7 A24 24 0 1 0 56 32 a7 7 0 0 1 -2 -6 Z"/>
+          <circle cx="24" cy="26" r="2.4"/>
+          <circle cx="36" cy="34" r="2.4"/>
+          <circle cx="22" cy="42" r="2.4"/>
+          <circle cx="33" cy="48" r="2.4"/>
+          <circle cx="44" cy="44" r="2.4"/>
+        </svg>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <!-- the -|- cross from the logo's H -->
+    <span class="mark"><svg viewBox="0 0 24 24"><path d="M2 12 H9 M15 12 H22 M12 2 V22"/></svg></span>
+    <p class="tagline">함께 일하는 행복, 한 잔에 담았습니다</p>
+    <p class="small">HISBEANS</p>
+  </footer>
+</div>
+</body>
+</html>
