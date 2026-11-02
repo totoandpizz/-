@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "karrot-ads": {
+      "type": "http",
+      "url": "https://ads-mcp.kr.karrotmarket.com/mcp"
+    }
+  }
+}
