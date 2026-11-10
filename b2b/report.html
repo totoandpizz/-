@@ -1,0 +1,186 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+@page{size:A4;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1f2421;--muted:#6b716c;--line:#e4e1da;--bg:#faf8f4;--brand:#5a3e2b;--accent:#c7843f;--good:#3f7d58;--bad:#b4503c;--soft:#f2ece3}
+body{font-family:'Noto Sans KR','WenQuanYi Zen Hei',sans-serif;color:var(--ink);background:#fff;font-size:10.5pt;line-height:1.55;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:210mm;height:297mm;padding:16mm 15mm 14mm;position:relative;page-break-after:always;overflow:hidden}
+.page:last-child{page-break-after:auto}
+.foot{position:absolute;bottom:8mm;left:15mm;right:15mm;display:flex;justify-content:space-between;font-size:8pt;color:var(--muted);border-top:1px solid var(--line);padding-top:3mm}
+.eyebrow{font-size:8.5pt;font-weight:700;letter-spacing:.12em;color:var(--accent);text-transform:uppercase}
+h1{font-size:24pt;font-weight:900;line-height:1.25;margin:2mm 0 3mm;color:var(--brand)}
+h2{font-size:14pt;font-weight:800;color:var(--brand);margin:0 0 3.5mm;display:flex;align-items:center;gap:2.5mm}
+h2 .n{background:var(--brand);color:#fff;font-size:9pt;width:6.5mm;height:6.5mm;border-radius:50%;display:inline-flex;align-items:center;justify-content:center}
+.lead{color:var(--muted);font-size:10pt}
+.hero{background:var(--brand);color:#fff;border-radius:4mm;padding:9mm 9mm 8mm;margin-bottom:7mm}
+.hero h1{color:#fff}.hero .lead{color:#e9dccd}.hero .eyebrow{color:#f0b979}
+.insight{margin-top:5mm;background:rgba(255,255,255,.1);border-left:3px solid #f0b979;padding:3.5mm 4.5mm;border-radius:1.5mm;font-size:11pt}
+.insight b{color:#f6c993}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:3.5mm;margin-bottom:7mm}
+.kpi{border:1px solid var(--line);border-radius:3mm;padding:4mm 4.5mm;background:var(--bg)}
+.kpi .v{font-size:20pt;font-weight:900;line-height:1.1}
+.kpi .l{font-size:8.5pt;color:var(--muted);margin-top:1mm}
+.kpi.g .v{color:var(--good)}.kpi.r .v{color:var(--bad)}.kpi.a .v{color:var(--accent)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-bottom:7mm}
+.seg{border-radius:3mm;padding:5mm;border:1px solid var(--line)}
+.seg.keep{background:#eef5f0;border-color:#cfe3d6}.seg.leave{background:#f9ece8;border-color:#efd2ca}
+.seg h3{font-size:11.5pt;font-weight:800;margin-bottom:2mm}
+.seg.keep h3{color:var(--good)}.seg.leave h3{color:var(--bad)}
+.bar{display:flex;align-items:center;gap:2.5mm;font-size:9pt;margin:1.6mm 0}
+.bar span:first-child{width:22mm;color:var(--muted)}
+.track{flex:1;height:3mm;background:rgba(0,0,0,.06);border-radius:2mm;overflow:hidden}
+.fill{height:100%;border-radius:2mm}
+.keep .fill{background:var(--good)}.leave .fill{background:var(--bad)}
+.bar b{width:16mm;text-align:right}
+.q{font-size:10pt;margin-top:3mm;font-weight:500}
+.funnel{display:flex;gap:1.5mm;margin-bottom:5mm}
+.funnel div{flex:1;text-align:center;font-size:8.5pt;font-weight:700;padding:2.2mm 0;background:var(--soft);color:var(--brand);clip-path:polygon(0 0,92% 0,100% 50%,92% 100%,0 100%,8% 50%)}
+.funnel div:first-child{clip-path:polygon(0 0,92% 0,100% 50%,92% 100%,0 100%)}
+.hyp{border:1px solid var(--line);border-radius:3mm;padding:3.6mm 4.5mm;margin-bottom:3mm;display:grid;grid-template-columns:13mm 1fr;gap:3mm;break-inside:avoid}
+.hyp.pri{border:1.5px solid var(--accent);background:#fdf7ef}
+.tag{font-weight:900;font-size:13pt;color:var(--brand);line-height:1}
+.tag small{display:block;font-size:7pt;font-weight:700;color:var(--muted);margin-top:1.2mm;letter-spacing:.02em}
+.hyp .t{font-weight:700;font-size:10.5pt;margin-bottom:1.2mm}
+.hyp .ev{font-size:8.5pt;color:var(--muted);margin-bottom:1mm}
+.hyp .qq{font-size:9pt}
+.hyp .qq b{color:var(--accent);font-weight:700;margin-right:1mm}
+.star{display:inline-block;background:var(--accent);color:#fff;font-size:7pt;font-weight:700;padding:.4mm 1.8mm;border-radius:1mm;margin-left:1.5mm;vertical-align:2px}
+.prio{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-bottom:7mm}
+.p{background:var(--brand);color:#fff;border-radius:3mm;padding:4.5mm 4mm}
+.p .k{font-size:16pt;font-weight:900;color:#f0b979}
+.p .d{font-size:9pt;margin-top:1.5mm;line-height:1.45}
+.tips{display:grid;gap:3mm}
+.tip{display:grid;grid-template-columns:9mm 1fr;gap:3mm;align-items:start;padding:4mm;border-radius:3mm;background:var(--bg);border:1px solid var(--line)}
+.tip .i{width:9mm;height:9mm;border-radius:2mm;background:var(--soft);color:var(--brand);font-weight:900;display:flex;align-items:center;justify-content:center}
+.tip b{display:block;font-size:10.5pt;margin-bottom:.8mm}
+.tip p{font-size:9pt;color:#444}
+.crit{margin-top:6mm;border:1.5px dashed var(--accent);border-radius:3mm;padding:4.5mm 5mm;background:#fffaf3}
+.crit .eyebrow{margin-bottom:1.5mm}
+.mt{margin-top:6mm}
+</style></head><body>
+
+<section class="page">
+  <div class="hero">
+    <div class="eyebrow">B2B 기존 고객 만족도 조사 · 가설 정리</div>
+    <h1>계속 사는 고객과<br>한 번 사고 떠나는 고객</h1>
+    <p class="lead">2026.01.01 ~ 11.04 세금계산서 기준 · B2B 고객 52곳 · 매출 1억 9,021만 원</p>
+    <div class="insight">정기 납품형(원두·카페)은 <b>이미 잘 남아 있고</b>, 시즌 선물·커스텀형은 <b>대부분 한 번 사고 떠납니다.</b><br>조사의 핵심 질문: <b>시즌형 고객은 왜 다시 오지 않는가?</b></div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi g"><div class="v">82%</div><div class="l">원두 구매 고객 재구매율 (18/22곳)</div></div>
+    <div class="kpi r"><div class="v">23%</div><div class="l">선물세트 구매 고객 재구매율 (3/13곳)</div></div>
+    <div class="kpi a"><div class="v">42.6%</div><div class="l">애터미 1곳의 매출 비중 · 상위 10곳 81%</div></div>
+  </div>
+
+  <h2><span class="n">1</span>고객은 두 그룹으로 나뉩니다</h2>
+  <div class="compare">
+    <div class="seg keep">
+      <h3>정기 납품형 · 유지 중</h3>
+      <div class="bar"><span>카페(F&amp;B)</span><div class="track"><div class="fill" style="width:100%"></div></div><b>7/7</b></div>
+      <div class="bar"><span>원두</span><div class="track"><div class="fill" style="width:82%"></div></div><b>18/22</b></div>
+      <div class="bar"><span>드립백</span><div class="track"><div class="fill" style="width:60%"></div></div><b>3/5</b></div>
+      <p class="q">→ 왜 계속 사는가? 더 늘릴 여지는?</p>
+    </div>
+    <div class="seg leave">
+      <h3>시즌 선물·커스텀형 · 이탈 多</h3>
+      <div class="bar"><span>커스텀</span><div class="track"><div class="fill" style="width:40%"></div></div><b>4/10</b></div>
+      <div class="bar"><span>베이커리</span><div class="track"><div class="fill" style="width:33%"></div></div><b>2/6</b></div>
+      <div class="bar"><span>선물세트</span><div class="track"><div class="fill" style="width:23%"></div></div><b>3/13</b></div>
+      <p class="q">→ 왜 다시 오지 않는가?</p>
+    </div>
+  </div>
+
+  <h2><span class="n">2</span>매출은 명절 시즌에 몰립니다</h2>
+  <svg viewBox="0 0 600 150" width="100%" style="display:block">
+    <g font-family="Noto Sans KR, WenQuanYi Zen Hei" font-size="10" fill="#6b716c" text-anchor="middle">
+    <!-- values in 만원: 1:2076 2:2164 3:771 4:586 5:1991 6:1145 7:2255 8:1341 9:4486 10:2126 11:80 ; scale 4486->110px -->
+    <rect x="18" y="79" width="34" height="51" rx="3" fill="#d9c7b3"/><text x="35" y="145">1월</text>
+    <rect x="72" y="77" width="34" height="53" rx="3" fill="#d9c7b3"/><text x="89" y="145">2월</text>
+    <rect x="126" y="111" width="34" height="19" rx="3" fill="#e9e1d6"/><text x="143" y="145">3월</text>
+    <rect x="180" y="116" width="34" height="14" rx="3" fill="#e9e1d6"/><text x="197" y="145">4월</text>
+    <rect x="234" y="81" width="34" height="49" rx="3" fill="#e9e1d6"/><text x="251" y="145">5월</text>
+    <rect x="288" y="102" width="34" height="28" rx="3" fill="#e9e1d6"/><text x="305" y="145">6월</text>
+    <rect x="342" y="75" width="34" height="55" rx="3" fill="#e9e1d6"/><text x="359" y="145">7월</text>
+    <rect x="396" y="97" width="34" height="33" rx="3" fill="#e9e1d6"/><text x="413" y="145">8월</text>
+    <rect x="450" y="20" width="34" height="110" rx="3" fill="#c7843f"/><text x="467" y="145">9월</text>
+    <rect x="504" y="78" width="34" height="52" rx="3" fill="#e9e1d6"/><text x="521" y="145">10월</text>
+    <rect x="558" y="128" width="34" height="2" rx="1" fill="#e9e1d6"/><text x="575" y="145">11월*</text>
+    <text x="467" y="13" fill="#5a3e2b" font-weight="700">4,486만 · 추석</text>
+    <text x="62" y="70" fill="#5a3e2b" font-weight="700">설 시즌</text>
+    </g>
+  </svg>
+  <p class="lead" style="font-size:8.5pt;margin-top:1mm">* 11월은 4일까지 집계. 연말·설 시즌 직전인 지금이 재구매 가설을 검증하고 바로 실행하기 좋은 시점입니다.</p>
+  <div class="foot"><span>B2B 서비스 기획 · 기존 고객 조사</span><span>1 / 3</span></div>
+</section>
+
+<section class="page">
+  <h2><span class="n">3</span>퍼널 단계별 가설 7가지</h2>
+  <div class="funnel"><div>문의·상담</div><div>주문·생산</div><div>제품 사용</div><div>재구매·추천</div></div>
+
+  <div class="hyp pri"><div class="tag">H5<small>재구매</small></div><div>
+    <div class="t">선물·커스텀 고객은 불만이 아니라 다음 시즌에 우리를 떠올리지 못해서 떠난다<span class="star">최우선</span></div>
+    <div class="ev">근거: 선물세트 재구매율 23%, 매출이 명절에 집중</div>
+    <div class="qq"><b>Q</b>다음 명절에 다시 살 의향은? 지난번엔 왜 안 샀나(업체 변경 / 잊음 / 예산)? 시즌 전에 미리 연락을 받으면 좋을까?</div></div></div>
+
+  <div class="hyp pri"><div class="tag">H2<small>문의·상담</small></div><div>
+    <div class="t">견적이 늦게 나오고 가격 기준이 불명확해서 결정이 늦어진다<span class="star">우선</span></div>
+    <div class="ev">근거: 기획안의 "문의별 개별 할인 적용" 현황</div>
+    <div class="qq"><b>Q</b>견적까지 걸린 시간은? 가격이 적정하다고 느꼈나? 표준 단가표가 있었으면 좋았을까?</div></div></div>
+
+  <div class="hyp pri"><div class="tag">H3<small>주문·생산</small></div><div>
+    <div class="t">커스텀 주문은 시안·납기 진행 상황을 알기 어려워 고객이 불안해하고 손이 많이 간다<span class="star">우선</span></div>
+    <div class="ev">근거: 주문별 개별 견적·납품 대응, 7단계 수작업 프로세스</div>
+    <div class="qq"><b>Q</b>진행 상황을 몇 번 직접 물어봤나? 납기는 지켜졌나? 가장 번거로웠던 단계는?</div></div></div>
+
+  <div class="hyp pri"><div class="tag">H6<small>재구매</small></div><div>
+    <div class="t">정기 고객은 품질이 일정하고 주문이 편해서 남아 있고, 구독·자동 발주로 주문량을 늘릴 수 있다<span class="star">우선</span></div>
+    <div class="ev">근거: 원두 재구매율 82%, 카페 100%</div>
+    <div class="qq"><b>Q</b>계속 구매하는 이유는? 주문할 때 불편한 점은? 콜드브루·드립백도 함께 받을 의향은?</div></div></div>
+
+  <div class="hyp"><div class="tag">H1<small>문의·상담</small></div><div>
+    <div class="t">문의 채널이 공식적이지 않아서(카톡·전화·지인) 처음 주문할 때 진입 장벽이 있다</div>
+    <div class="qq"><b>Q</b>처음 어떻게 알고 연락했나? 문의할 때 막힌 점은? 홈페이지 견적 문의 창구가 있었다면 썼을까?</div></div></div>
+
+  <div class="hyp"><div class="tag">H4<small>제품 사용</small></div><div>
+    <div class="t">맛보다 받는 사람의 반응(포장·카드·브랜드 스토리)이 구매 담당자의 만족을 결정한다</div>
+    <div class="qq"><b>Q</b>받은 사람들의 반응은? 사내 피드백이 있었나? 소셜벤처라는 스토리가 구매 이유였나?</div></div></div>
+
+  <div class="hyp"><div class="tag">H7<small>추천</small></div><div>
+    <div class="t">기관 고객(학교·교회·NGO)은 담당자 소개로 다른 부서·기관까지 퍼질 수 있다</div>
+    <div class="ev">근거: 대전과기대 → 입학처, 한동대 대외협력팀 → 평생교육원</div>
+    <div class="qq"><b>Q</b>다른 부서나 기관에 추천한 적이 있나? 추천할 때 필요한 자료는?</div></div></div>
+  <div class="foot"><span>B2B 서비스 기획 · 기존 고객 조사</span><span>2 / 3</span></div>
+</section>
+
+<section class="page">
+  <h2><span class="n">4</span>먼저 검증할 가설 4가지</h2>
+  <div class="prio">
+    <div class="p"><div class="k">H5</div><div class="d">가장 큰 매출 개선 지점. 연말·설 시즌 직전이라 바로 실행 가능</div></div>
+    <div class="p"><div class="k">H2</div><div class="d">지금 만드는 표준 가격 정책이 맞는 방향인지 검증</div></div>
+    <div class="p"><div class="k">H3</div><div class="d">서비스 페이지·주문 대시보드의 필요성 검증</div></div>
+    <div class="p"><div class="k">H6</div><div class="d">매출의 중심인 기존 고객을 지키면서 늘리기</div></div>
+  </div>
+
+  <h2><span class="n">5</span>조사 설계 팁</h2>
+  <div class="tips">
+    <div class="tip"><div class="i">A</div><div><b>대상을 나눠서 질문하기</b><p>정기형(원두·카페)과 시즌형(선물세트·커스텀)은 질문지를 다르게 가져갑니다. 한 번만 산 고객이 이탈 원인을 들을 수 있는 가장 중요한 대상입니다.</p></div></div>
+    <div class="tip"><div class="i">B</div><div><b>애터미는 따로 인터뷰하기</b><p>매출의 43%라서 설문 결과에 섞이면 평균이 왜곡됩니다. 이 고객을 잃으면 리스크도 크기 때문에 1:1 심층 인터뷰를 추천합니다.</p></div></div>
+    <div class="tip"><div class="i">C</div><div><b>가설마다 판단 기준을 미리 정하기</b><p>결과를 보고 바로 다음 행동을 정할 수 있도록 채택·기각 기준을 조사 전에 합의합니다.</p></div></div>
+  </div>
+
+  <div class="crit">
+    <div class="eyebrow">판단 기준 예시 · H5</div>
+    <p>"다음 시즌 재구매 의향이 있는데 실제로 안 산 이유로 <b>'잊었다 / 연락이 없었다'가 30% 이상</b>이면 채택"<br>→ 채택 시: 명절 4~6주 전 기존 고객 대상 시즌 제안 메일·카톡 발송 프로세스 도입</p>
+  </div>
+
+  <h2 class="mt"><span class="n">6</span>조사 대상 구성 (안)</h2>
+  <div class="compare" style="grid-template-columns:repeat(3,1fr)">
+    <div class="seg keep"><h3>정기형 재구매 고객</h3><p style="font-size:9pt">원두·카페 고객<br>→ 설문 + 2~3곳 인터뷰<br>검증 가설: H6, H2</p></div>
+    <div class="seg leave"><h3>1회 구매 고객</h3><p style="font-size:9pt">선물세트·커스텀 고객<br>→ 설문 + 3~4곳 인터뷰<br>검증 가설: H5, H3, H4</p></div>
+    <div class="seg" style="background:var(--soft)"><h3 style="color:var(--brand)">핵심 거래처</h3><p style="font-size:9pt">애터미, 한동대 등<br>→ 1:1 심층 인터뷰<br>검증 가설: 전체 + H7</p></div>
+  </div>
+  <div class="foot"><span>B2B 서비스 기획 · 기존 고객 조사</span><span>3 / 3</span></div>
+</section>
+</body></html>
