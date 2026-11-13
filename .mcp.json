@@ -3,6 +3,11 @@
     "karrot-ads": {
       "type": "http",
       "url": "https://ads-mcp.kr.karrotmarket.com/mcp"
+    },
+    "excel": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@sbroenne/mcp-server-excel@latest"]
     }
   }
 }
